@@ -22,7 +22,7 @@ export interface DatedEntry {
 export interface SourceHealth { source: Source; ok: boolean }
 export interface QueryReply { entries: DatedEntry[]; zone: string; sources: SourceHealth[] }
 
-export const ROUTINE_STATUSES = ["on", "paused", "repoint"] as const;
+export const ROUTINE_STATUSES = ["on", "paused", "repoint", "waiting"] as const;
 export type RoutineStatus = (typeof ROUTINE_STATUSES)[number];
 export interface RoutineRow {
   id: string;

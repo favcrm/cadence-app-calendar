@@ -66,6 +66,7 @@ test("a malformed reply is refused", () => {
 
 test("routines parse and refuse the same way", () => {
   expect(parseRoutinesReply({ routines: [routine, { ...routine, id: "r2", next_run_at: undefined, status: "paused", asks_first: false }] })).toHaveLength(2);
+  expect(parseRoutinesReply({ routines: [{ ...routine, status: "waiting" }] })[0].status).toBe("waiting");
   expect(() => parseRoutinesReply({ routines: [{ ...routine, status: "running" }] })).toThrow(ReplyError);
   expect(() => parseRoutinesReply({ routines: [{ ...routine, asks_first: 1 }] })).toThrow(ReplyError);
   expect(() => parseRoutinesReply({ routines: [{ ...routine, next_run_at: "tomorrow" }] })).toThrow(ReplyError);

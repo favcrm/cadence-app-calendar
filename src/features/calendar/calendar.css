@@ -24,7 +24,7 @@ html, body { height: 100%; }
   background: transparent; font: 500 var(--text-micro) var(--font-mono); line-height: 1.5; color: var(--color-ink-300);
   vertical-align: middle; overflow-wrap: anywhere;
 }
-.cal .chip[data-status="needs"], .cal .chip[data-status="approval"], .cal .chip[data-status="repoint"], .cal .chip[data-status="paused"], .cal .chip[data-status="warn"], .cal .chip[data-status="draft"] { color: var(--color-warn); }
+.cal .chip[data-status="needs"], .cal .chip[data-status="approval"], .cal .chip[data-status="repoint"], .cal .chip[data-status="paused"], .cal .chip[data-status="waiting"], .cal .chip[data-status="warn"], .cal .chip[data-status="draft"] { color: var(--color-warn); }
 .cal .chip[data-status="on"], .cal .chip[data-status="posted"], .cal .chip[data-status="sent"], .cal .chip[data-status="ran"], .cal .chip[data-status="done"] { color: var(--color-ok); }
 .cal .chip[data-status="failed"] { color: var(--color-fail); }
 .cal-zone { cursor: pointer; }
