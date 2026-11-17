@@ -3,13 +3,14 @@
 // never authority: the drawer frame re-validates it with the strict parsers in
 // `entries.ts` and shows "unavailable" for anything that is not exactly this shape.
 import { DRAWER_CONTEXT_BYTES } from "@cadence/app-kit";
-import { isZone, parseEntry, type DatedEntry } from "./entries";
+import { isZone, parseEntry, parseRoutine, type DatedEntry, type RoutineRow } from "./entries";
 
-export const SURFACES = ["entry", "about"] as const;
+export const SURFACES = ["entry", "routine", "about"] as const;
 export type SurfaceName = (typeof SURFACES)[number];
 export const isSurfaceName = (value: unknown): value is SurfaceName => typeof value === "string" && (SURFACES as readonly string[]).includes(value);
 
 export interface EntryContext { entry: DatedEntry; zone: string }
+export interface RoutineContext { routine: RoutineRow; zone: string }
 export interface AboutContext { zone: string | null }
 
 const within = (value: unknown): boolean => {
@@ -20,6 +21,12 @@ const within = (value: unknown): boolean => {
 export function entryContext(entry: DatedEntry, zone: string): EntryContext | null {
   const { href: _href, ...shown } = entry;
   const context = { entry: shown as DatedEntry, zone };
+  return within(context) ? context : null;
+}
+
+/** The routine row plus the company zone, or `null` when it would not fit the host's context cap. */
+export function routineContext(routine: RoutineRow, zone: string): RoutineContext | null {
+  const context = { routine, zone };
   return within(context) ? context : null;
 }
 
@@ -35,6 +42,11 @@ const record = (v: unknown): v is Record<string, unknown> => typeof v === "objec
 export function parseEntryContext(value: unknown): EntryContext | null {
   if (!record(value) || Object.keys(value).sort().join() !== "entry,zone" || !isZone(value.zone)) return null;
   try { return { entry: parseEntry(value.entry), zone: value.zone }; } catch { return null; }
+}
+
+export function parseRoutineContext(value: unknown): RoutineContext | null {
+  if (!record(value) || Object.keys(value).sort().join() !== "routine,zone" || !isZone(value.zone)) return null;
+  try { return { routine: parseRoutine(value.routine), zone: value.zone }; } catch { return null; }
 }
 
 /** A missing context (`null`) means the zone is not known yet. */

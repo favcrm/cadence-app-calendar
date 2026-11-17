@@ -8,6 +8,8 @@ import { fixtureQuery, fixtureRoutines } from "./fixtures";
 const params = new URLSearchParams(location.search);
 const scenario = params.get("host") ?? "ready";
 const locale = params.get("locale") === "zh-TW" ? "zh-TW" : "en";
+// The board's own sidebar navigation drives the section: `?section=routines`.
+const section = params.get("section") === "routines" ? "routines" : "calendar";
 const theme = params.get("theme") === "light" ? "light" : "dark";
 document.documentElement.dataset.theme = theme;
 
@@ -25,7 +27,7 @@ const DRAWER_SURFACE = /^[a-z0-9_-]{1,64}$/;
 const newNonce = () => Array.from(crypto.getRandomValues(new Uint8Array(32)), (b) => b.toString(16).padStart(2, "0")).join("");
 
 // One mount per frame: the primary, and (while open) the drawer frame the host presents.
-interface Mount { frame: HTMLIFrameElement; nonce: string; role: "primary" | "drawer"; surface?: string; context?: unknown; port: MessagePort | null; wantsSurfaces: boolean }
+interface Mount { panel?: HTMLElement; frame: HTMLIFrameElement; nonce: string; role: "primary" | "drawer"; surface?: string; context?: unknown; port: MessagePort | null; wantsSurfaces: boolean }
 const mounts: Mount[] = [];
 let drawer: Mount | null = null;
 let layer: HTMLElement | null = null;
@@ -39,7 +41,7 @@ function project(mount: Mount) {
   mount.port?.postMessage({
     v: 2, op: "screen", tag: "calendar", install_id: installId, digest,
     installation: { install_id: installId, name: "calendar", title: "Calendar", version: "development", digest, summary: "Local browser-memory fixtures" },
-    actions, route: { section: "calendar", view: "list", record_id: null, segment_id: null }, presentation_locale: locale,
+    actions, route: { section, view: "list", record_id: null, segment_id: null }, presentation_locale: locale,
   });
 }
 
@@ -54,7 +56,7 @@ function closeDrawer() {
   const gone = drawer;
   drawer = null;
   gone.port?.close();
-  gone.frame.remove();
+  (gone.panel ?? gone.frame).remove();
   layer?.remove();
   layer = null;
   mounts.splice(mounts.indexOf(gone), 1);
@@ -70,10 +72,23 @@ function openDrawer(surface: string, context: unknown) {
   layer.addEventListener("click", closeDrawer);
   mount.frame.id = "drawer-frame";
   mount.frame.title = "Calendar app — presented drawer";
-  mount.frame.className = "preview-drawer";
+  // The board's own drawer: a "Details" header with an x, then the app frame inset by the host.
+  const panel = document.createElement("aside");
+  panel.className = "preview-drawer";
+  const head = document.createElement("header");
+  const label = document.createElement("span");
+  label.textContent = "Details";
+  const x = document.createElement("button");
+  x.type = "button";
+  x.textContent = "×";
+  x.setAttribute("aria-label", "Close details");
+  x.addEventListener("click", closeDrawer);
+  head.append(label, x);
+  panel.append(head, mount.frame);
+  mount.panel = panel;
   drawer = mount;
   mounts.push(mount);
-  stage.append(layer, mount.frame);
+  stage.append(layer, panel);
   mount.frame.src = `./frame.html?nonce=${mount.nonce}&theme=${theme}`;
   postSurface(mounts[0], true);
 }
@@ -143,4 +158,7 @@ window.addEventListener("keydown", (event) => { if (event.key === "Escape") clos
 window.addEventListener("pagehide", () => mounts.forEach((m) => m.port?.close()));
 const primary: Mount = { frame: primaryFrame, nonce: newNonce(), role: "primary", port: null, wantsSurfaces: false };
 mounts.push(primary);
+// `?w=1016` sizes the app frame like a narrower board column (the host insets the frame by the stage padding).
+const width = Number(params.get("w"));
+if (Number.isFinite(width) && width >= 320) { primaryFrame.style.flex = "none"; primaryFrame.style.width = `${width}px`; }
 primaryFrame.src = `./frame.html?nonce=${primary.nonce}&theme=${theme}`;

@@ -3,7 +3,7 @@
 import { expect, test } from "bun:test";
 import { DRAWER_CONTEXT_BYTES } from "@cadence/app-kit";
 
-const { aboutContext, entryContext, parseAboutContext, parseEntryContext } = await import("../../src/domain/surface");
+const { aboutContext, entryContext, parseAboutContext, parseEntryContext, parseRoutineContext, routineContext } = await import("../../src/domain/surface");
 const { presentOrFallback } = await import("../../src/bridge/present");
 const { resolveSurface } = await import("../../src/features/calendar/PresentedDrawer");
 import type { DatedEntry } from "../../src/domain/entries";
@@ -81,4 +81,16 @@ test("a drawer frame never opens another drawer", async () => {
   await tick();
   expect(calls).toEqual([]);
   expect(local).toBe(0);
+});
+
+const routine = { id: "r1", name: "Morning brief", agent: "Nova", schedule_text: "Weekdays at 08:00", status: "on" as const, asks_first: false };
+
+test("a routine context round-trips, is bounded and is parsed strictly", () => {
+  const context = routineContext(routine, "Asia/Hong_Kong");
+  expect(context).not.toBeNull();
+  expect(parseRoutineContext(JSON.parse(JSON.stringify(context)))).toEqual(context!);
+  expect(routineContext({ ...routine, schedule_text: "€".repeat(300) }, "Asia/Hong_Kong")).toBeNull();
+  for (const bad of [null, {}, { routine, zone: "Not/AZone" }, { routine: { ...routine, status: "gone" }, zone: "Asia/Hong_Kong" }, { routine, zone: "Asia/Hong_Kong", x: 1 }]) expect(parseRoutineContext(bad)).toBeNull();
+  expect(resolveSurface("routine", context).status).toBe("routine");
+  expect(resolveSurface("entry", context).status).toBe("invalid");
 });

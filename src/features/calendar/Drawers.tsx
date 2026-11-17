@@ -35,12 +35,12 @@ export function EntryDrawer({ entry, zone, now, onClose, presented }: { entry: D
   );
 }
 
-export function RoutineDrawer({ routine, zone, now, onClose }: { routine: RoutineRow; zone: string; now: Date; onClose: () => void }) {
+export function RoutineDrawer({ routine, zone, now, onClose, presented }: { routine: RoutineRow; zone: string; now: Date; onClose: () => void; presented?: boolean }) {
   const { locale, t } = useLocale();
   const next = routine.next_run_at ? wallClock(routine.next_run_at, zone) : null;
   const status = routine.status === "on" ? t("state.on") : stateLabel(routine.status, t);
   return (
-    <FrameDrawer kind="routine" label={t("routine.kicker")} kicker={t("routine.kicker")} title={routine.name} subtitle={routine.agent}
+    <FrameDrawer presented={presented} kind="routine" label={t("routine.kicker")} kicker={t("routine.kicker")} title={routine.name} subtitle={routine.agent}
       pills={<><span className="chip" data-status={routine.status}>{status}</span>{routine.asks_first && <span className="chip">{t("routine.asks.badge")}</span>}</>}
       tabs={[{ id: "details", label: t("routine.kicker"), panel: (
         <>

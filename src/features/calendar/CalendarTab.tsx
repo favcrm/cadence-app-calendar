@@ -1,5 +1,5 @@
 import { Button, Notice } from "@cadence/screen-ui";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { queryCalendar } from "../../bridge/calendarClient";
 import { channel } from "../../bridge/channel";
 import { groupByDay, rangeLabel, stepAnchor, todayIn, viewRange, type ViewMode, type YMD } from "../../domain/calendar";
@@ -43,7 +43,7 @@ function Results({ reply, view, anchor, today, layers, onOpen, onPickDay }: { re
   );
 }
 
-export default function CalendarTab({ zone, now, onZone }: { zone: string; now: Date; onZone: (zone: string) => void }) {
+export default function CalendarTab({ zone, now, onZone, trailing }: { zone: string; now: Date; onZone: (zone: string) => void; trailing: ReactNode }) {
   const { locale, t } = useLocale();
   const [view, setView] = useState<ViewMode>(() => (typeof matchMedia === "function" && matchMedia(NARROW).matches ? "agenda" : "week"));
   // `null` follows today in the company zone; a pick pins the date.
@@ -73,6 +73,7 @@ export default function CalendarTab({ zone, now, onZone }: { zone: string; now: 
         <div className="cal-views" role="group" aria-label={t("view.label")}>
           {VIEWS.map((v) => <Button key={v} size="sm" variant={v === view ? "primary" : "secondary"} aria-pressed={v === view} onClick={() => setView(v)}>{t(`view.${v}`)}</Button>)}
         </div>
+        {trailing}
       </div>
       <div className="cal-layers" role="group" aria-label={t("layers.label")}>
         {SOURCES.map((s) => <Button key={s} size="sm" variant={layers[s] ? "primary" : "secondary"} aria-pressed={layers[s]} onClick={() => setLayers({ ...layers, [s]: !layers[s] })}>{t(`layer.${s}`)}</Button>)}

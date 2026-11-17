@@ -35,11 +35,10 @@ function Body() {
   // The company zone is only known once the host has answered; until then dates fall back to this device's zone and no zone is claimed.
   const [companyZone, setZone] = useState<string | null>(null);
   const zone = companyZone ?? browserZone();
-  const [section, setSection] = useState<CalendarSection>("calendar");
   const onZone = useCallback((z: string) => setZone(z), []);
+  // The host's sidebar (the declared navigation sections) is the only navigation: its route picks the view.
   const routeSection = snapshot?.route?.section;
-  // The host's own section navigation drives the tab; in-app tabs just follow it too.
-  useEffect(() => { if (routeSection) setSection(routeSection); }, [routeSection]);
+  const section: CalendarSection = routeSection && SECTIONS.includes(routeSection) ? routeSection : "calendar";
   useEffect(() => { if (hostDraws) setAbout(false); }, [hostDraws]);
   useEffect(() => {
     if (snapshot) return;
@@ -55,20 +54,16 @@ function Body() {
   if (surface.role === "drawer") return <PresentedDrawer name={surface.name} />;
   const now = new Date();
   const openAbout = () => present("about", aboutContext(companyZone), () => setAbout(true));
+  const trailing = (
+    <div className="cal-trailing">
+      {companyZone && <button type="button" className="chip cal-zone" title={t("zone.title")} onClick={openAbout}>{zoneLabel(zone, now)}</button>}
+      <Button size="sm" variant="ghost" aria-label={t("about.aria")} onClick={openAbout}>{t("about.button")}</Button>
+    </div>
+  );
   return (
     <main className="app-outlet cal" key={`${snapshot.scope.installId}:${snapshot.digest}`}>
-      <header className="cal-head">
-        <nav className="app-outlet-tabs" aria-label={t("tabs.label")}>
-          {SECTIONS.map((id) => (
-            <button key={id} type="button" className="app-outlet-tab" data-on={id === section || undefined} aria-current={id === section ? "page" : undefined} onClick={() => setSection(id)}>{t(`tabs.${id}`)}</button>
-          ))}
-        </nav>
-        <span className="cal-grow" />
-        {companyZone && <button type="button" className="chip cal-zone" title={t("zone.title")} onClick={openAbout}>{zoneLabel(zone, now)}</button>}
-        <Button size="sm" variant="ghost" aria-label={t("about.aria")} onClick={openAbout}>{t("about.button")}</Button>
-      </header>
-      <div className="cal-panel" hidden={section !== "calendar"}><CalendarTab zone={zone} now={now} onZone={onZone} /></div>
-      <div className="cal-panel" hidden={section !== "routines"}><RoutinesTab zone={zone} now={now} /></div>
+      <div className="cal-panel" hidden={section !== "calendar"}><CalendarTab zone={zone} now={now} onZone={onZone} trailing={trailing} /></div>
+      <div className="cal-panel" hidden={section !== "routines"}><RoutinesTab zone={zone} now={now} trailing={trailing} /></div>
       {about && !hostDraws && <AboutDrawer zone={companyZone} now={now} onClose={() => setAbout(false)} />}
     </main>
   );
