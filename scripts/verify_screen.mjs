@@ -13,7 +13,7 @@ const SCREEN_ASSET_CAP=2097152, SCREEN_TOTAL_CAP=2097152, SCREEN_MANIFEST_CAP=32
 const decl = parseJson(decoder.decode(readFileSync(safePath(out,'screens.json'))),SCREEN_MANIFEST_CAP);
 exact(decl,['contract','app','entry','assets','provenance','may','host_contract','tools','operations','navigation'],['remote_images','startup']);
 if (decl.contract !== 'app-screens/v2' || decl.app !== 'calendar' || decl.entry !== 'client.js' || decl.host_contract !== 'screen-records.v1') fail('Calendar screen contract mismatch');
-if (JSON.stringify(decl.may) !== JSON.stringify([]) || Object.keys(decl.tools ?? {}).length || !decl.tools || Array.isArray(decl.tools) || typeof decl.tools !== 'object' || (decl.remote_images !== undefined && JSON.stringify(decl.remote_images) !== '[]')) fail('Unexpected bridge authority');
+if (JSON.stringify(decl.may) !== JSON.stringify(['records.call']) || Object.keys(decl.tools ?? {}).length || !decl.tools || Array.isArray(decl.tools) || typeof decl.tools !== 'object' || (decl.remote_images !== undefined && JSON.stringify(decl.remote_images) !== '[]')) fail('Unexpected bridge authority');
 if (JSON.stringify(decl.operations) !== JSON.stringify(operationInventory())) fail('Operations differ from the source inventory');
 exact(decl.provenance,['source_digest','sdk_digest','toolchain_digest']);
 const expected = {source_digest:`sha256:${sourceDigest()}`,sdk_digest:`sha256:${env.pin.archive.sha256}`,toolchain_digest:`sha256:${hash(JSON.stringify(env.pin.toolchain))}`};
