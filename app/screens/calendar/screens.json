@@ -1,0 +1,52 @@
+{
+  "contract": "app-screens/v2",
+  "app": "calendar",
+  "entry": "client.js",
+  "startup": [
+    "runtime.js",
+    "client.js"
+  ],
+  "assets": [
+    {
+      "name": "runtime.js",
+      "media_type": "text/javascript",
+      "size": 191021,
+      "sha256": "sha256:b29baaa6a3605936e69f355072450d7ca05bfea9d0f9f1f6af07a7afc7a9989e"
+    },
+    {
+      "name": "client.js",
+      "media_type": "text/javascript",
+      "size": 73966,
+      "sha256": "sha256:56e24a4c8c21218f519527f4db9a0e7b2b6361d23dbcca5f3274db0bee9c05af"
+    },
+    {
+      "name": "calendar.css",
+      "media_type": "text/css",
+      "size": 32840,
+      "sha256": "sha256:8c020587a38ab4e84f4c81506872f6b5657fd849c603ef555853f1c388cc363c"
+    }
+  ],
+  "provenance": {
+    "source_digest": "sha256:113997891a4512fcced6a6d20e22065aefee98d0405b8e15c861f126fabdc4a8",
+    "sdk_digest": "sha256:fd65c974511e63b3996e9fa7e438fb4e39df5f508d11636116ef150fcc123e35",
+    "toolchain_digest": "sha256:e21cfc8222db408abe6ba5a482520639d9cf4b96481c19aff4b4246af8a65e42"
+  },
+  "host_contract": "screen-records.v1",
+  "may": [],
+  "tools": {},
+  "operations": [],
+  "navigation": {
+    "section_query": "calendar",
+    "default_section": "calendar",
+    "sections": [
+      {
+        "id": "calendar",
+        "label": "Calendar"
+      },
+      {
+        "id": "routines",
+        "label": "Routines"
+      }
+    ]
+  }
+}
