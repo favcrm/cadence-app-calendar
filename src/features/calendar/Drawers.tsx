@@ -15,12 +15,12 @@ function CloseButton({ onClose }: { onClose: () => void }) {
   return <Button size="sm" variant="primary" onClick={onClose}>{t("drawer.close")}</Button>;
 }
 
-export function EntryDrawer({ entry, zone, now, onClose }: { entry: DatedEntry; zone: string; now: Date; onClose: () => void }) {
+export function EntryDrawer({ entry, zone, now, onClose, presented }: { entry: DatedEntry; zone: string; now: Date; onClose: () => void; presented?: boolean }) {
   const { locale, t } = useLocale();
   const time = entryTime(entry, zone);
   const when = `${formatLongDay(entryDay(entry, zone), locale)} · ${time ? `${time} ${zoneLabel(zone, now)}` : t("entry.allDay")}`;
   return (
-    <FrameDrawer kind="entry" label={t(`source.${entry.source}`)} kicker={t(`source.${entry.source}`)} title={entry.title}
+    <FrameDrawer presented={presented} kind="entry" label={t(`source.${entry.source}`)} kicker={t(`source.${entry.source}`)} title={entry.title}
       pills={<><span className="chip" data-status={entry.state}>{stateLabel(entry.state, t)}</span>{entry.needs_you && <span className="chip" data-status="needs">{t("entry.needsYou")}</span>}</>}
       tabs={[{ id: "details", label: t("drawer.when"), panel: (
         <Detail rows={[
@@ -63,11 +63,11 @@ function Section({ title, ids }: { title: MessageId; ids: [MessageId, Record<str
   return <section className="cal-about-sec"><h4>{t(title)}</h4><ul>{ids.map(([id, params]) => <li key={id}>{t(id, params)}</li>)}</ul></section>;
 }
 
-export function AboutDrawer({ zone, now, onClose }: { zone: string | null; now: Date; onClose: () => void }) {
+export function AboutDrawer({ zone, now, onClose, presented }: { zone: string | null; now: Date; onClose: () => void; presented?: boolean }) {
   const { t } = useLocale();
   const zoneName = zone ? `${zone} (${zoneLabel(zone, now)})` : null;
   return (
-    <FrameDrawer kind="about" label={t("about.title")} kicker={t("app.title")} title={t("about.title")} subtitle={t("about.subtitle")}
+    <FrameDrawer presented={presented} kind="about" label={t("about.title")} kicker={t("app.title")} title={t("about.title")} subtitle={t("about.subtitle")}
       tabs={[{ id: "about", label: t("about.title"), panel: (
         <div className="cal-about">
           <Section title="about.how" ids={[["about.how.1"], ["about.how.2"], ["about.how.3"]]} />

@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { DatedEntry } from "../../domain/entries";
 import { dayOfMonth, eachDay, formatDay, formatWeekday, monthGrid, startOfWeek, viewRange, AGENDA_DAYS, type YMD } from "../../domain/calendar";
 import EntryCard from "./Entry";
@@ -45,7 +46,7 @@ export function MonthView({ anchor, today, zone, byDay, onOpen, onPickDay }: Vie
   const month = anchor.slice(0, 7);
   const weeks = monthGrid(anchor);
   return (
-    <div className="cal-month" role="grid" aria-label={month}>
+    <div className="cal-month" role="grid" aria-label={month} style={{ "--weeks": weeks.length } as CSSProperties}>
       <div className="cal-month-head" role="row">
         {weeks[0].map((day) => <span key={day} role="columnheader">{formatWeekday(day, locale)}</span>)}
       </div>

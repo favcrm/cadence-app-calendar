@@ -27,6 +27,8 @@ export function createCalendarBridge(): CalendarBridge {
     appName: "calendar",
     records: true,
     locale: true,
+    // Host-local presentation verbs only (open/close/context); they are not records operations and add none to screens.json.
+    surfaces: true,
     calls: CLIENT_CALLS,
     route: { sections: SECTIONS, defaultSection: "calendar", views: ["list"] },
     maxInFlight: 4,
@@ -37,9 +39,13 @@ export function createCalendarBridge(): CalendarBridge {
 
 export class Channel implements HostCalls {
   private instance: CalendarBridge | null = null;
+  private initialSurface: unknown = null;
 
   get bridge(): CalendarBridge {
-    if (!this.instance) this.instance = createCalendarBridge();
+    if (!this.instance) {
+      this.instance = createCalendarBridge();
+      this.initialSurface = this.instance.getState().surface;
+    }
     return this.instance;
   }
 
@@ -48,6 +54,13 @@ export class Channel implements HostCalls {
     const state = this.bridge.getState();
     if (state.status === "error" && state.error) throw state.error;
   }
+
+  /**
+   * True once the host has sent its surface message, which only a host that
+   * negotiated `screen-surfaces.v1` does. Until then (older host, no host) the
+   * screen keeps its own in-frame drawer.
+   */
+  hostPresents = (): boolean => this.bridge.getState().surface !== this.initialSurface;
 
   offers = (verb: string): boolean => this.bridge.can(verb);
 

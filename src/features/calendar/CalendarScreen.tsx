@@ -1,12 +1,15 @@
 import { Button, ErrorNotice, Loading } from "@cadence/screen-ui";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SECTIONS, type CalendarSection } from "../../bridge/channel";
-import { useBridgeError, useSnapshot } from "../../bridge/scope";
+import { useBridgeError, useSnapshot, useSurface } from "../../bridge/scope";
+import { aboutContext } from "../../domain/surface";
 import { zoneLabel, type Locale } from "../../domain/calendar";
 import CalendarTab from "./CalendarTab";
 import { AboutDrawer } from "./Drawers";
 import { CalendarLocaleProvider, useLocale } from "./locale";
+import PresentedDrawer from "./PresentedDrawer";
 import RoutinesTab from "./RoutinesTab";
+import { usePresenter } from "./usePresenter";
 import "./calendar.css";
 
 // Waiting longer than this for the first verified host push means the host is unreachable.
@@ -24,6 +27,8 @@ export default function CalendarScreen() {
 function Body() {
   const snapshot = useSnapshot();
   const reason = useBridgeError();
+  const surface = useSurface();
+  const { present, hostDraws } = usePresenter();
   const { t } = useLocale();
   const [unreachable, setUnreachable] = useState(false);
   const [about, setAbout] = useState(false);
@@ -35,6 +40,7 @@ function Body() {
   const routeSection = snapshot?.route?.section;
   // The host's own section navigation drives the tab; in-app tabs just follow it too.
   useEffect(() => { if (routeSection) setSection(routeSection); }, [routeSection]);
+  useEffect(() => { if (hostDraws) setAbout(false); }, [hostDraws]);
   useEffect(() => {
     if (snapshot) return;
     const timer = setTimeout(() => setUnreachable(true), HOST_PUSH_TIMEOUT_MS);
@@ -45,7 +51,10 @@ function Body() {
     if (reason) return <main className="app-outlet cal"><ErrorNotice>{t("bridge.lost")} {reason}</ErrorNotice></main>;
     return <main className="app-outlet cal">{unreachable ? <ErrorNotice>{t("host.unreachable")}</ErrorNotice> : <Loading>{t("loading.host")}</Loading>}</main>;
   }
+  // The host mounted this frame as its board drawer: draw only that drawer.
+  if (surface.role === "drawer") return <PresentedDrawer name={surface.name} />;
   const now = new Date();
+  const openAbout = () => present("about", aboutContext(companyZone), () => setAbout(true));
   return (
     <main className="app-outlet cal" key={`${snapshot.scope.installId}:${snapshot.digest}`}>
       <header className="cal-head">
@@ -55,12 +64,12 @@ function Body() {
           ))}
         </nav>
         <span className="cal-grow" />
-        {companyZone && <button type="button" className="chip cal-zone" title={t("zone.title")} onClick={() => setAbout(true)}>{zoneLabel(zone, now)}</button>}
-        <Button size="sm" variant="ghost" aria-label={t("about.aria")} onClick={() => setAbout(true)}>{t("about.button")}</Button>
+        {companyZone && <button type="button" className="chip cal-zone" title={t("zone.title")} onClick={openAbout}>{zoneLabel(zone, now)}</button>}
+        <Button size="sm" variant="ghost" aria-label={t("about.aria")} onClick={openAbout}>{t("about.button")}</Button>
       </header>
-      <div hidden={section !== "calendar"}><CalendarTab zone={zone} now={now} onZone={onZone} /></div>
-      <div hidden={section !== "routines"}><RoutinesTab zone={zone} now={now} /></div>
-      {about && <AboutDrawer zone={companyZone} now={now} onClose={() => setAbout(false)} />}
+      <div className="cal-panel" hidden={section !== "calendar"}><CalendarTab zone={zone} now={now} onZone={onZone} /></div>
+      <div className="cal-panel" hidden={section !== "routines"}><RoutinesTab zone={zone} now={now} /></div>
+      {about && !hostDraws && <AboutDrawer zone={companyZone} now={now} onClose={() => setAbout(false)} />}
     </main>
   );
 }

@@ -14,3 +14,9 @@ export function useBridgeError(): string | null {
   const bridge = channel.bridge;
   return useSyncExternalStore(bridge.subscribe, () => bridge.getState().error?.message ?? null);
 }
+
+/** The host-derived surface this frame is mounted as: the primary, or a presented drawer. */
+export function useSurface() {
+  const bridge = channel.bridge;
+  return useSyncExternalStore(bridge.subscribe, () => bridge.getState().surface);
+}

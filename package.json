@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit",
     "build": "node scripts/build_screen.mjs",
     "verify": "node scripts/verify_screen.mjs",
-    "test": "bun test tests/unit/entries.test.ts && bun test tests/unit/calendar.test.ts && bun test tests/unit/locale.test.ts && bun test tests/contract/calendar_client.test.ts && node --test tests/unit/publish-candidate.test.mjs"
+    "test": "bun test tests/unit/entries.test.ts && bun test tests/unit/calendar.test.ts && bun test tests/unit/locale.test.ts && bun test tests/unit/surface.test.ts && bun test tests/unit/surface-render.test.tsx && bun test tests/contract/calendar_client.test.ts && node --test tests/unit/publish-candidate.test.mjs"
   },
   "cadence": {
     "app": "calendar",
