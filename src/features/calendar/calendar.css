@@ -150,7 +150,9 @@ html, body { height: 100%; }
 .cal-frame-drawer { display: contents; }
 .cal .crm-drawer.crm-drawer-shell { top: 0; right: 0; bottom: auto; height: 100vh; height: 100dvh; width: min(30rem, 100vw); }
 /* Presented drawer frame: only the content. The host's header, x and frame inset are the chrome. */
-.cal-presented { display: block; height: auto; padding: 0; overflow: visible; background: transparent; }
+/* Host-presented drawer: the host draws the panel and its close, not an inset, so the
+   content carries its own padding (the same 1rem/1.25rem rhythm Social Content uses). */
+.cal-presented { display: block; box-sizing: border-box; min-height: 100vh; min-height: 100dvh; padding: 1rem 1.25rem 1.5rem; overflow-y: auto; background: transparent; }
 .cal-bare-head { display: grid; gap: 0.25rem; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--color-ink-700); }
 .cal-presented .crm-drawer-title:focus { outline: none; }
 .cal-detail { display: grid; gap: 0.9rem; margin: 0; }
