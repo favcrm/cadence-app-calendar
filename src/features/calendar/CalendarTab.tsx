@@ -31,7 +31,7 @@ function Results({ reply, view, anchor, today, layers, onOpen, onPickDay }: { re
   const drafts = useMemo(() => shown.filter((e) => e.state === "draft"), [shown]);
   const needs = useMemo(() => [...groupByDay(shown.filter((e) => e.needs_you && e.state !== "draft"), zone).values()].flat(), [shown, zone]);
   const byDay = useMemo(() => groupByDay(grid, zone), [grid, zone]);
-  const missing = reply.sources.filter((s) => !s.ok && layers[s.source]).map((s) => t());
+  const missing = reply.sources.filter((s) => !s.ok && layers[s.source]).map((s) => t(`layer.${s.source}`));
   const props = { anchor, today, zone, byDay, onOpen, onPickDay };
   return (
     <>
@@ -57,7 +57,7 @@ export default function CalendarTab({ zone, now, onZone, trailing }: { zone: str
   const today = todayIn(zone, now);
   const anchor = pinned ?? today;
   const range = viewRange(view, anchor);
-  const [phase, reload] = useOutcome(() => queryCalendar(channel, range), );
+  const [phase, reload] = useOutcome(() => queryCalendar(channel, range), `${range.from}|${range.to}`);
   const replyZone = phase.phase === "ready" ? phase.data.zone : null;
   useEffect(() => { if (replyZone && replyZone !== zone) onZone(replyZone); }, [replyZone, zone, onZone]);
   useEffect(() => { if (hostDraws) setOpen(null); }, [hostDraws]);
@@ -74,12 +74,12 @@ export default function CalendarTab({ zone, now, onZone, trailing }: { zone: str
         </div>
         <h2 className="cal-range" aria-live="polite">{rangeLabel(view, anchor, locale)}</h2>
         <div className="cal-views" role="group" aria-label={t("view.label")}>
-          {VIEWS.map((v) => <Button key={v} size="sm" variant={v === view ? "primary" : "secondary"} aria-pressed={v === view} onClick={() => setView(v)}>{t()}</Button>)}
+          {VIEWS.map((v) => <Button key={v} size="sm" variant={v === view ? "primary" : "secondary"} aria-pressed={v === view} onClick={() => setView(v)}>{t(`view.${v}`)}</Button>)}
         </div>
         {trailing}
       </div>
       <div className="cal-layers" role="group" aria-label={t("layers.label")}>
-        {SOURCES.filter(s => s === "holiday" || offeredSources.has(s)).map((s) => <Button key={s} size="sm" variant={layers[s] ? "primary" : "secondary"} aria-pressed={layers[s]} onClick={() => setLayers({ ...layers, [s]: !layers[s] })}>{t()}</Button>)}
+        {SOURCES.filter(s => s === "holiday" || offeredSources.has(s)).map((s) => <Button key={s} size="sm" variant={layers[s] ? "primary" : "secondary"} aria-pressed={layers[s]} onClick={() => setLayers({ ...layers, [s]: !layers[s] })}>{t(`layer.${s}`)}</Button>)}
       </div>
       <Gate phase={phase} loadingId="loading.calendar" errorId="error.calendar" onRetry={reload}>
         {(reply) => <Results reply={reply} view={view} anchor={anchor} today={todayIn(reply.zone, now)} layers={layers} onOpen={openEntry} onPickDay={(day) => { setPinned(day); setView("week"); }} />}
