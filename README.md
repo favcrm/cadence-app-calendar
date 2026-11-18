@@ -16,12 +16,12 @@ holidays, plus a workspace-wide list of routines with the agent that owns each.
 It is read-only and stores nothing. Times are shown in the company time zone the
 host reports.
 
-## Status: waiting for host operations
+## Host operations
 
-The screen asks the host for two bridge operations, `calendar.query` (a half-open
-`{from, to}` range of `YYYY-MM-DD`) and `routines.list`. They are not in a released
-Cadence yet, and a host refuses an unknown operation in a screen manifest, so this
-bundle declares none. Until a host offers them the screen shows "Calendar needs a
+The screen declares two host operations, `calendar.query` (a half-open
+`{from, to}` range of `YYYY-MM-DD`) and `routines.list`, with `records.call`. They
+ship in the Cadence release after main @ 81555fcc7 (CAD-2379, CAD-2402); an older
+host refuses this bundle. If a call is refused the screen shows "Calendar needs a
 newer version of Cadence" and no dates; it never fills in fake data and never
 shows an empty calendar in place of an unavailable one.
 

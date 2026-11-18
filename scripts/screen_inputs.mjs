@@ -48,7 +48,7 @@ export function parseJson(raw, cap = 786432) {
 // (the host refuses an unknown operation at parse time). The client asks for them through the
 // bridge and treats a refusal as "unavailable"; see src/bridge/calendarClient.ts.
 export function operationInventory() {
-  return [];
+  return ["calendar.query", "routines.list"];
 }
 export function inputs(args) {
   const at = args.indexOf("--toolchain-root");

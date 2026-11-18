@@ -27,14 +27,19 @@
     }
   ],
   "provenance": {
-    "source_digest": "sha256:9dfa263d6830acd64113eff64b9cdb10b060e55f411bddcb9aee16fae353d50a",
+    "source_digest": "sha256:ab41ceb0afcc8453b7d69362a2c716f0179038a8cac72fdf90ecf147f76e91bf",
     "sdk_digest": "sha256:fd65c974511e63b3996e9fa7e438fb4e39df5f508d11636116ef150fcc123e35",
     "toolchain_digest": "sha256:e21cfc8222db408abe6ba5a482520639d9cf4b96481c19aff4b4246af8a65e42"
   },
   "host_contract": "screen-records.v1",
-  "may": [],
+  "may": [
+    "records.call"
+  ],
   "tools": {},
-  "operations": [],
+  "operations": [
+    "calendar.query",
+    "routines.list"
+  ],
   "navigation": {
     "section_query": "calendar",
     "default_section": "calendar",

@@ -35,11 +35,11 @@ contract.
 
 The screen asks the host for a dated summary through two bridge
 operations, `calendar.query` (a half-open `{from, to}` range of dates) and
-`routines.list`. Those operations arrive with a Cadence host release; this
-bundle declares none of them in its screen manifest, because a host
-refuses an operation it does not know. Until a host offers them the
-screen says "Calendar needs a newer version of Cadence" and shows no
-dates. It never invents entries and never shows an empty calendar in
+`routines.list`, both declared in its screen manifest with
+`records.call`. A Cadence host older than the release that adds them
+refuses this bundle at install; on a host that offers them but refuses a
+call, the screen says "Calendar needs a newer version of Cadence" and
+shows no dates. It never invents entries and never shows an empty calendar in
 place of an unavailable one.
 
 What a host reply may carry is deliberately small: a title, a time or a

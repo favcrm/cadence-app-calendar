@@ -13,14 +13,13 @@ and changes nothing. The screen uses only the pinned `@cadence/app-kit` bridge
 and `@cadence/screen-ui`; never add a private `postMessage` receiver, a copy of
 the host frame or host CSS, and never reach for another app's records.
 
-The host data operations `calendar.query` and `routines.list` do not exist in a
-released Cadence yet. The host refuses an operation it does not know, so
-`app/screens/calendar/screens.json` declares **no** operations (the build
-writes it; never hand-edit its digests) and the screen reads "unavailable" -
-"Calendar needs a newer version of Cadence" - rather than inventing dates or
-showing an empty calendar. Declare the operations only in the release that
-follows the host release that ships them, and add them to the build inventory
-in `scripts/screen_inputs.mjs` in the same change. The bundle must not require
+`app/screens/calendar/screens.json` declares the host operations
+`calendar.query` and `routines.list` with `may: ["records.call"]` (the build
+writes it from `scripts/screen_inputs.mjs`; never hand-edit its digests). A host
+older than the Cadence release that ships them refuses an operation it does not
+know, so this bundle needs that release; a refused call still reads
+"unavailable" - "Calendar needs a newer version of Cadence" - rather than
+inventing dates or showing an empty calendar. The bundle must not require
 `app-storage`: a native `cadence app check` refuses it (exit 3).
 
 Replies are parsed strictly in `src/domain/entries.ts`; a reply that is not
