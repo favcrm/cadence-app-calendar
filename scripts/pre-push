@@ -1,0 +1,20 @@
+#!/bin/sh
+# Install: ln -s ../../scripts/pre-push .git/hooks/pre-push
+# Build, check the bundle, then test. Calendar has no storage, so `cadence app check` must
+# exit 0 with `ok: true`. Point CADENCE_BIN at the CI-pinned checker when the `cadence` on PATH is older.
+set -eu
+cd "$(dirname "$0")/.."
+pnpm run typecheck
+pnpm run build
+pnpm run verify
+report="$(mktemp)"
+trap 'rm -f "$report"' EXIT
+status=0
+"${CADENCE_BIN:-cadence}" app check app --json > "$report" || status=$?
+if [ "$status" -ne 0 ]; then
+  echo "app check failed with exit ${status}" >&2
+  cat "$report" >&2
+  exit 1
+fi
+python3 .github/scripts/assert-app-check.py "$report"
+pnpm test

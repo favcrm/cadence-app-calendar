@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calendar · Local preview</title>
+</head>
+<body>
+  <header class="preview-bar">
+    <strong>Calendar</strong>
+    <span class="preview-tag">Local preview · synthetic fixtures</span>
+    <span class="preview-grow"></span>
+    <label>Host <select id="p-host">
+      <option value="ready">Offers dates</option>
+      <option value="nodrawer">Host without drawers (in-frame fallback)</option>
+      <option value="old">Older Cadence (no operations)</option>
+      <option value="refuse">Refuses the operations</option>
+      <option value="malformed">Malformed reply</option>
+      <option value="error">Transient error</option>
+      <option value="partial">One source unreadable</option>
+      <option value="empty">New workspace (empty)</option>
+      <option value="slow">Slow host</option>
+    </select></label>
+    <label>Language <select id="p-locale"><option value="en">English</option><option value="zh-TW">繁體中文</option></select></label>
+    <label>Theme <select id="p-theme"><option value="dark">Dark</option><option value="light">Light</option></select></label>
+  </header>
+  <p class="preview-notice" role="note">Browser-memory fixtures. No host, no data, nothing is sent or changed. Reload resets.</p>
+  <main class="preview-stage"><iframe id="calendar-frame" name="calendar-frame" title="Calendar app — local fixtures"></iframe></main>
+  <script type="module" src="./host.ts"></script>
+</body>
+</html>

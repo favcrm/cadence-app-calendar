@@ -1,0 +1,18 @@
+@import "@cadence/screen-ui/styles.css";
+html, body { height: 100%; }
+body { margin: 0; display: flex; flex-direction: column; }
+.preview-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem; padding: 0.5rem 1rem; border-bottom: 1px solid var(--color-ink-700); font-size: var(--text-label); }
+.preview-bar label { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--color-ink-400); }
+.preview-bar select { font: inherit; color: var(--color-ink-200); background: var(--color-ink-850); border: 1px solid var(--color-ink-700); border-radius: 0.25rem; padding: 0.15rem 0.3rem; }
+.preview-tag { color: var(--color-ink-500); font-family: var(--font-mono); font-size: var(--text-micro); }
+.preview-grow { flex: 1 1 auto; }
+.preview-notice { margin: 0; padding: 0.3rem 1rem; font-size: var(--text-micro); color: var(--color-ink-500); border-bottom: 1px solid var(--color-ink-700); }
+/* The board insets the app frame (about 32px); the frame itself carries no padding. */
+.preview-stage { position: relative; box-sizing: border-box; flex: 1 1 auto; min-height: 0; display: flex; padding: 2rem; }
+.preview-stage iframe { flex: 1 1 auto; width: 100%; border: 0; background: transparent; }
+/* The emulated board drawer: a scrim over the app and a full-height frame on the right (the host owns both). */
+.preview-scrim { position: absolute; inset: 0; background: var(--color-scrim); }
+.preview-drawer { position: absolute; top: 0; right: 0; bottom: 0; width: min(30rem, 100%); display: flex; flex-direction: column; background: var(--color-ink-875); border-left: 1px solid var(--color-ink-700); }
+.preview-drawer > header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.2rem; border-bottom: 1px solid var(--color-ink-700); font-size: var(--text-label); color: var(--color-ink-200); }
+.preview-drawer > header button { font-size: 1rem; color: var(--color-ink-400); background: none; border: 0; cursor: pointer; }
+.preview-drawer iframe { flex: 1 1 auto; min-height: 0; width: 100%; box-sizing: border-box; padding: 1.2rem; border: 0; background: transparent; }
