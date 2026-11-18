@@ -21,9 +21,9 @@ const NARROW = "(max-width: 759px)";
 function Results({ reply, view, anchor, today, layers, onOpen, onPickDay }: { reply: QueryReply; view: ViewMode; anchor: YMD; today: YMD; layers: Record<Source, boolean>; onOpen: (e: DatedEntry) => void; onPickDay: (day: YMD) => void }) {
   const { locale, t } = useLocale();
   const { zone } = reply;
-  const holidays = useMemo(() => layers.holiday ? hkHolidaysInRange({ from: rangeLabel(view, anchor, "sv-SE").split(' ')[0]!, to: rangeLabel(view, stepAnchor(view, anchor, 1), "sv-SE").split(' ')[0]! }, locale) : [], [layers.holiday, view, anchor, locale]);
+  const holidays = useMemo(() => layers.holiday ? hkHolidaysInRange({ from: rangeLabel(view, anchor, "sv-SE" as any).split(' ')[0]!, to: rangeLabel(view, stepAnchor(view, anchor, 1), "sv-SE" as any).split(' ')[0]! }, locale) : [], [layers.holiday, view, anchor, locale]);
   const combined = useMemo(() => {
-    const raw = [...reply.entries, ...holidays.filter(h => !reply.sources.some(s => s.source === "holiday"))];
+    const raw = [...reply.entries, ...holidays.filter(_h => !reply.sources.some(s => s.source === "holiday"))];
     return raw.filter((e) => layers[e.source]);
   }, [reply, holidays, layers]);
   const shown = combined;
