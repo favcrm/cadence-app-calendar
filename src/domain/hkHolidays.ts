@@ -1,4 +1,4 @@
-import { DatedEntry } from "./entries";
+import type { DatedEntry } from "./entries";
 
 export type YMD = string; // YYYY-MM-DD
 type Locale = "en" | "zh-TW";
